@@ -46,10 +46,8 @@ Sub ConfigureSheets()
     ' SHEET: INSCRIPCIONES
     ' ==========================================
     With wsInscripciones
-        .Range("C:D").Insert Shift:=xlToRight
-        
-        .Range("F:F").Resize(ColumnSize:=4).Insert Shift:=xlToRight
-        
+        .Range("C:D").Insert Shift:=xlToRight        
+        .Range("F:F").Resize(ColumnSize:=4).Insert Shift:=xlToRight        
         lastRow = .Cells(.Rows.Count, "B").End(xlUp).Row
 
         .Range("C4:D4").Value = Array("vigencia_inicio", "vigencia_final")
@@ -57,11 +55,13 @@ Sub ConfigureSheets()
 
         For i = 5 To lastRow
             rawText = .Range("B" & i).Value
+
             If InStr(rawText, " al ") > 0 Then
                 dateParts = Split(rawText, " ")
                 .Range("C" & i).Value = Trim(dateParts(0))
                 .Range("D" & i).Value = Trim(Replace(dateParts(2), ".", ""))
             End If
+
         Next i
 
         .Range("F5:F" & lastRow).Formula = "=XLOOKUP([@[txt_alumno]],Table11[nombre],Table11[sexo])"
