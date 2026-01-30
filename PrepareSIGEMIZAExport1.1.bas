@@ -33,8 +33,9 @@ Sub ConfigureSheets()
     With wsCursos
         .Range("C:C").Resize(ColumnSize:=1).Insert Shift:=xlToRight
         .Range("C4").Value = "codigo_curso"
-        
-        .Range("C5").Formula = "=[@codigo] & "" - "" & [@curso]"
+
+        lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+        .Range("C5:C" & lastRow).Formula = "=[@codigo] & "" - "" & [@curso]"
 
         .Range("L:M").NumberFormatLocal = "d/mm/yyyy"
         .Range("C:C").NumberFormatLocal = "@"
@@ -53,15 +54,23 @@ Sub ConfigureSheets()
         .Range("C4:D4").Value = Array("vigencia_inicio", "vigencia_final")
         .Range("F4:I4").Value = Array("sexo", "edad", "nacionalidad", "cursos")
 
-        For i = 5 To lastRow
+       For i = 5 To lastRow
             rawText = .Range("B" & i).Value
-
             If InStr(rawText, " al ") > 0 Then
                 dateParts = Split(rawText, " ")
-                .Range("C" & i).Value = Trim(dateParts(0))
-                .Range("D" & i).Value = Trim(Replace(dateParts(2), ".", ""))
-            End If
 
+                Dim strDate1 As String
+                strDate1 = Trim(dateParts(0))
+                If IsDate(strDate1) Then
+                    .Range("C" & i).Value = CDate(strDate1)
+                End If
+
+                Dim strDate2 As String
+                strDate2 = Trim(Replace(dateParts(2), ".", ""))
+                If IsDate(strDate2) Then
+                    .Range("D" & i).Value = CDate(strDate2)
+                End If
+            End If
         Next i
 
         .Range("F5:F" & lastRow).Formula = "=XLOOKUP([@[txt_alumno]],Table11[nombre],Table11[sexo])"
