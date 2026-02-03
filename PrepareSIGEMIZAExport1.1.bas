@@ -37,7 +37,7 @@ Sub ConfigureSheets()
         lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
         .Range("C5:C" & lastRow).Formula = "=[@codigo] & "" - "" & [@curso]"
 
-        .Range("L:M").NumberFormatLocal = "d/mm/yyyy"
+        .Range("M:N").NumberFormatLocal = "d/mm/yyyy"
         .Range("C:C").NumberFormatLocal = "@"
         .Range("K:K").NumberFormatLocal = "@"
         .Range("O:O").NumberFormatLocal = "@"
