@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Office-Scripts.iml" filepath="$PROJECT_DIR$/.idea/Office-Scripts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/sigemizaVBA.iml" filepath="$PROJECT_DIR$/.idea/sigemizaVBA.iml" />
     </modules>
   </component>
 </project>

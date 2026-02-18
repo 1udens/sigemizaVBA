@@ -1,6 +1,6 @@
-' ────────────────────────────────────────────────────────────
+' ------------------------------------------------------------
 ' ConfigureSheets
-' ────────────────────────────────────────────────────────────
+' ------------------------------------------------------------
 Sub ConfigureSheets()
     Application.ScreenUpdating = False
     Application.Calculation = xlCalculationManual
@@ -10,17 +10,11 @@ Sub ConfigureSheets()
     Dim dateParts() As String, rawText As String
     Dim strDate1 As String, strDate2 As String
 
-    If Not SheetExists("Alumnos") Or Not SheetExists("Cursos") Or Not SheetExists("Inscripciones") Then
-        MsgBox "No se encontraron las hojas requeridas: Alumnos, Cursos, Inscripciones." & _
-               vbCrLf & "Asegúrese de importar primero los datos desde la base de datos.", vbCritical
-        GoTo Cleanup
-    End If
-
-    Set wsAlumnos       = ThisWorkbook.Worksheets("Alumnos")
-    Set wsCursos        = ThisWorkbook.Worksheets("Cursos")
+    Set wsAlumnos = ThisWorkbook.Worksheets("Alumnos")
+    Set wsCursos = ThisWorkbook.Worksheets("Cursos")
     Set wsInscripciones = ThisWorkbook.Worksheets("Inscripciones")
 
-    ' ── ALUMNOS ──────────────────────────────────────────────
+    '------ALUMNOS------------------------------------------
     With wsAlumnos
         lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipAlumnos
@@ -40,7 +34,7 @@ Sub ConfigureSheets()
     End With
 SkipAlumnos:
 
-    ' ── CURSOS ───────────────────────────────────────────────
+    '------CURSOS------------------------------------------
     With wsCursos
         lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipCursos
@@ -59,7 +53,7 @@ SkipAlumnos:
     End With
 SkipCursos:
 
-    ' ── INSCRIPCIONES ────────────────────────────────────────
+    '------INSCRIPCIONES------------------------------------------
     With wsInscripciones
         lastRow = .Cells(.Rows.Count, "B").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipInsc
@@ -99,7 +93,6 @@ SkipCursos:
         .Range("J5:J" & lastRow).Formula = _
             "=IFERROR(XLOOKUP([@[txt_alumno]],Alumnos!$A:$A,Alumnos!$L:$L),0)"
 
-        ' Formatos
         .Range("C:D").NumberFormatLocal = "dd/mm/yyyy"
         .Range("G:G").NumberFormatLocal = "@"
         .Range("I:I").NumberFormatLocal = "@"
@@ -111,5 +104,6 @@ SkipInsc:
 Cleanup:
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
-    MsgBox "Configuration complete", vbInformation
+    MsgBox "Configuration complete.", vbInformation
 End Sub
+
