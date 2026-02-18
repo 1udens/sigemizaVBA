@@ -15,7 +15,7 @@
 Option Explicit
 
 ' ────────────────────────────────────────────────────────────
-' 1. ConfigureSheets (versión mejorada del original)
+' ConfigureSheets
 ' ────────────────────────────────────────────────────────────
 Sub ConfigureSheets()
     Application.ScreenUpdating = False
@@ -26,7 +26,6 @@ Sub ConfigureSheets()
     Dim dateParts() As String, rawText As String
     Dim strDate1 As String, strDate2 As String
 
-    ' Verificar que las hojas existan
     If Not SheetExists("Alumnos") Or Not SheetExists("Cursos") Or Not SheetExists("Inscripciones") Then
         MsgBox "No se encontraron las hojas requeridas: Alumnos, Cursos, Inscripciones." & _
                vbCrLf & "Asegúrese de importar primero los datos desde la base de datos.", vbCritical
@@ -42,7 +41,6 @@ Sub ConfigureSheets()
         lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipAlumnos
 
-        ' Insertar columnas edad y cursos si no existen
         If .Cells(4, 11).Value <> "edad" Then
             .Range("K:K").Resize(ColumnSize:=2).Insert Shift:=xlToRight
             .Range("K4:L4").Value = Array("edad", "cursos")
@@ -51,7 +49,6 @@ Sub ConfigureSheets()
         .Range("K5:K" & lastRow).Formula = "=IFERROR(INT(YEARFRAC([@[fecha_nacimiento]],TODAY())),"""")"
         .Range("L5:L" & lastRow).Formula = "=IFERROR(COUNTIF(Inscripciones!$C:$C,[@nombre]),0)"
 
-        ' Formatear columnas
         .Range("F:F").NumberFormatLocal = "@"
         .Range("H:H").NumberFormatLocal = "@"
         .Range("J:J").NumberFormatLocal = "dd/mm/yyyy"
@@ -83,19 +80,16 @@ SkipCursos:
         lastRow = .Cells(.Rows.Count, "B").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipInsc
 
-        ' Columnas vigencia
         If .Cells(4, 3).Value <> "vigencia_inicio" Then
             .Range("C:D").Insert Shift:=xlToRight
             .Range("C4:D4").Value = Array("vigencia_inicio", "vigencia_final")
         End If
 
-        ' Columnas demográficas
         If .Cells(4, 7).Value <> "sexo" Then
             .Range("G:J").Insert Shift:=xlToRight
             .Range("G4:J4").Value = Array("sexo", "edad", "nacionalidad", "cursos_totales")
         End If
 
-        ' Parsear fechas de vigencia desde texto "dd/mm/yyyy al dd/mm/yyyy."
         Dim re As Object
         Set re = CreateObject("VBScript.RegExp")
         re.Pattern = "(\d{2}/\d{2}/\d{4}) al (\d{2}/\d{2}/\d{4})"
@@ -112,7 +106,6 @@ SkipCursos:
             End If
         Next i
 
-        ' XLOOKUP de datos del alumno (requiere Excel 365/2019+)
         .Range("G5:G" & lastRow).Formula = _
             "=IFERROR(XLOOKUP([@[txt_alumno]],Alumnos!$A:$A,Alumnos!$H:$H),"""")"
         .Range("H5:H" & lastRow).Formula = _
@@ -134,7 +127,7 @@ SkipInsc:
 Cleanup:
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
-    MsgBox "Configuración completada.", vbInformation
+    MsgBox "Configuration complete", vbInformation
 End Sub
 
 ' ────────────────────────────────────────────────────────────
