@@ -6,10 +6,10 @@ Data Prep & Enrichment: Automates calculation of student ages, course counts, an
 
 Pivot Table Generation: Creates and updates three distinct analytical views:
 
-_Enrollments by Location and Status.
+Enrollments by Location and Status.
 
 Enrollments by Schedule and Location.
 
-Monthly Attendance Percentage._
+Monthly Attendance Percentage.
 
 Filtering & Export: Includes tools to filter enrollment data by specific date ranges and export those snapshots to new worksheets.
