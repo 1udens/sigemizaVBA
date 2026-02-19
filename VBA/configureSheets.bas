@@ -1,6 +1,4 @@
-' ------------------------------------------------------------
-' ConfigureSheets
-' ------------------------------------------------------------
+Attribute VB_Name = "ConfigureExportModule"
 Sub ConfigureSheets()
     Application.ScreenUpdating = False
     Application.Calculation = xlCalculationManual
@@ -14,7 +12,6 @@ Sub ConfigureSheets()
     Set wsCursos = ThisWorkbook.Worksheets("Cursos")
     Set wsInscripciones = ThisWorkbook.Worksheets("Inscripciones")
 
-    '------ALUMNOS------------------------------------------
     With wsAlumnos
         lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipAlumnos
@@ -34,7 +31,6 @@ Sub ConfigureSheets()
     End With
 SkipAlumnos:
 
-    '------CURSOS------------------------------------------
     With wsCursos
         lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipCursos
@@ -53,7 +49,6 @@ SkipAlumnos:
     End With
 SkipCursos:
 
-    '------INSCRIPCIONES------------------------------------------
     With wsInscripciones
         lastRow = .Cells(.Rows.Count, "B").End(xlUp).Row
         If lastRow < 5 Then GoTo SkipInsc
