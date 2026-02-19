@@ -7,7 +7,7 @@ Sub ImportSpecificTables()
     Dim newWS As Worksheet ' Declared once at the top
     Dim sheetExists As Worksheet
 
-    ' 1. Select the File
+' 1. Select the File
     targetFilePath = Application.GetOpenFilename("Excel Files (*.xls*), *.xls*", , "Select Source Workbook")
     If targetFilePath = False Then Exit Sub
 
@@ -24,7 +24,7 @@ Sub ImportSpecificTables()
     objWB.Close SaveChanges:=False
     objExcel.Quit
 
-    ' 3. Show Popup
+' 3. Show Popup
     frm.Show
     If frm.Cancelled Then Unload frm: Exit Sub
 
@@ -39,7 +39,7 @@ Sub ImportSpecificTables()
                 "in" & vbCrLf & _
                 "    TargetTable"
 
-        ' 5. Check if Query Exists
+    ' 5. Check if Query Exists
         On Error Resume Next
         Set qry = ActiveWorkbook.Queries(qryName)
         On Error GoTo 0
@@ -89,7 +89,10 @@ Sub ImportSpecificTables()
             End With
         End If
     Next tblName
-
+    
     Unload frm
-    MsgBox "Import/Refresh Complete!", vbInformation
+
+    Call ApplyAllFormats
+    
+    MsgBox "Import/Refresh and Formatting Complete!", vbInformation
 End Sub
