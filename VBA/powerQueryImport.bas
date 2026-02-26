@@ -1,8 +1,8 @@
-Attribute VB_Name = "PowerQueryImportModule"
-Sub ImportSpecificTables()
+Attribute VB_Name = "PowerQueryImport"
+Sub PowerQueryImport()
     Dim targetFilePath As Variant
     Dim objExcel As Object, objWB As Object, ws As Object, lo As Object
-    Dim frm As New TableSelectorForm
+    Dim frm As New tableSelectorForm
     Dim qryName As String, mCode As String, qry As WorkbookQuery
     Dim tblName As Variant
     Dim newWS As Worksheet
@@ -75,10 +75,7 @@ Sub ImportSpecificTables()
             End With
         End If
     Next tblName
-    
+   
     Unload frm
-
-    Call ApplyAllFormats
-    
-    MsgBox "Import/Refresh and Formatting Complete!", vbInformation
+    MsgBox "Import complete, proceed to manually filter dates then run FormatImport", vbInformation
 End Sub
