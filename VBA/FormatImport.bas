@@ -42,7 +42,7 @@ Sub Formatting()
                                 .Replace "Sí finalizó + Certificado", "1", xlWhole
                                 .Replace "Sí finalizó", "2", xlWhole
                                 .Replace "Si finalizó", "2", xlWhole
-                                .Replace "En course", "3", xlWhole
+                                .Replace "En curso", "3", xlWhole
                                 .Replace "No finalizó", "4", xlWhole
                                 .Replace "Sólo se inscribió", "5", xlWhole
                                 .NumberFormat = "0"

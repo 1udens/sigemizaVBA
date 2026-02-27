@@ -1,9 +1,15 @@
 Attribute VB_Name = "CustomReportTables"
 Sub ReportTables()
+    ' 1. DECLARATIONS
     Dim wsAna As Worksheet
     Dim anaSheetName As String: anaSheetName = "Tables"
 
-    ' 1. SETUP SHEET
+    ' 2. SAFETY WRAPPERS ON (Prevents memory crashes and speeds up macro)
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+    Application.EnableEvents = False
+
+    ' 3. SETUP SHEET
     On Error Resume Next
     Set wsAna = ThisWorkbook.Worksheets(anaSheetName)
     On Error GoTo 0
@@ -40,14 +46,14 @@ Sub ReportTables()
     With wsAna.Range("B3:E3")
         .Interior.Color = RGB(252, 228, 214)
         .Font.Bold = True
-        .Value = Array("Course Status", "Female", "Male", "Total")
+        .Value = Array("Inscriptions", "Female", "Male", "Total")
     End With
     
     ' Inscriptions Row Labels
     With wsAna.Range("B4:B10")
         .Font.Bold = True
         .HorizontalAlignment = xlLeft
-        .Value = Application.Transpose(Array("Total inscriptions", _
+        .Value = Application.Transpose(Array("Total", _
                                              "Certified", _
                                              "Not certified", _
                                              "In course", _
@@ -106,7 +112,7 @@ Sub ReportTables()
     With wsAna.Range("B12:B15")
         .Font.Bold = True
         .HorizontalAlignment = xlLeft
-        .Value = Application.Transpose(Array("Total beneficiaries", "Guatemalan", "Belizean", "Other"))
+        .Value = Application.Transpose(Array("Total", "Guatemalan", "Belizean", "Other"))
     End With
 
     ' Formulas: Beneficiaries
@@ -205,7 +211,7 @@ Sub ReportTables()
         .Interior.Color = RGB(244, 123, 61)
         .Font.Color = RGB(255, 255, 255)
         .Font.Bold = True
-        .Value = "Data courses in 4 Ta'Amay Centres"
+        .Value = "Inscriptions by course type"
     End With
 
     With wsAna.Range("B18:K18")
@@ -217,66 +223,130 @@ Sub ReportTables()
     End With
 
     ' Header Merging
-    wsAna.Range("B19:B20").Merge: wsAna.Range("B19:B20").Value = "Course type"
-    wsAna.Range("C19:C20").Merge: wsAna.Range("C19:C20").Value = "Number of Courses Delivered"
-    
+    With wsAna.Range("B19:B20")
+        .Merge
+        .Value = "Course type"
+        .Interior.Color = RGB(252, 228, 214)
+    End With
+    With wsAna.Range("C19:C20")
+        .Merge
+        .Value = "Delivered"
+        .Interior.Color = RGB(252, 228, 214)
+    End With
     With wsAna.Range("D19:F19")
         .Merge
         .Value = "Participants"
+        .Interior.Color = RGB(252, 228, 214)
     End With
-    
     With wsAna.Range("G19:K19")
         .Merge
         .Value = "Age ranges"
+        .Interior.Color = RGB(252, 228, 214)
     End With
-    
     wsAna.Range("B19:K20").Font.Bold = True
 
     ' Row Labels and Column Sub-headers
-    wsAna.Range("B21:B23").Value = Application.Transpose(Array("Short courses", "Long courses", "All courses"))
-    wsAna.Range("D20:K20").Value = Array("Total", "Female", "Male", "Under 14", "14-18", "18-30", "30-50", "Over 50")
+    With wsAna.Range("B21:B23")
+        .Value = Application.Transpose(Array("Short courses", "Long courses", "All courses"))
+        .Font.Bold = True
+    End With
+    With wsAna.Range("D20:K20")
+    .Value = Array("Total", "Female", "Male", "Under 14", "14-18", "18-30", "30-50", "Over 50")
+    .Interior.Color = RGB(252, 228, 214)
+    End With
 
     ' Formulas: Course Counts
     wsAna.Range("C21").Formula = "=COUNTIFS(PQ_Table12[duracion],""SHORT"")"
     wsAna.Range("C22").Formula = "=COUNTIFS(PQ_Table12[duracion],""LONG"")"
-    wsAna.Range("C23").Formula = "=C21+C22" ' Efficient summing
+    wsAna.Range("C23").Formula = "=COUNTIFS(PQ_Table12[duracion],""<> "")"
 
     ' Formulas: Participants (Short, Long, Total)
     wsAna.Range("D21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[txt_finalizo],""<>5"")"
     wsAna.Range("D22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[txt_finalizo],""<>5"")"
-    wsAna.Range("D23").Formula = "=D21+D22"
+    wsAna.Range("D23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[txt_finalizo],""<>5"")"
 
     wsAna.Range("E21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[Sexo],""F"",PQ_Table13[txt_finalizo],""<>5"")"
     wsAna.Range("E22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[Sexo],""F"",PQ_Table13[txt_finalizo],""<>5"")"
-    wsAna.Range("E23").Formula = "=E21+E22"
+    wsAna.Range("E23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[Sexo],""F"",PQ_Table13[txt_finalizo],""<>5"")"
 
     wsAna.Range("F21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[Sexo],""M"",PQ_Table13[txt_finalizo],""<>5"")"
     wsAna.Range("F22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[Sexo],""M"",PQ_Table13[txt_finalizo],""<>5"")"
-    wsAna.Range("F23").Formula = "=F21+F22"
+    wsAna.Range("F23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[Sexo],""M"",PQ_Table13[txt_finalizo],""<>5"")"
 
     ' Formulas: Age Ranges
     wsAna.Range("G21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],""<14"")"
     wsAna.Range("G22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],""<14"")"
-    wsAna.Range("G23").Formula = "=G21+G22"
+    wsAna.Range("G23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],""<14"")"
 
     wsAna.Range("H21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=14"",PQ_Table13[edad],""<18"")"
     wsAna.Range("H22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=14"",PQ_Table13[edad],""<18"")"
-    wsAna.Range("H23").Formula = "=H21+H22"
+    wsAna.Range("H23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=14"",PQ_Table13[edad],""<18"")"
 
     wsAna.Range("I21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=18"",PQ_Table13[edad],""<30"")"
     wsAna.Range("I22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=18"",PQ_Table13[edad],""<30"")"
-    wsAna.Range("I23").Formula = "=I21+I22"
+    wsAna.Range("I23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=18"",PQ_Table13[edad],""<30"")"
 
     wsAna.Range("J21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=30"",PQ_Table13[edad],""<50"")"
     wsAna.Range("J22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=30"",PQ_Table13[edad],""<50"")"
-    wsAna.Range("J23").Formula = "=J21+J22"
+    wsAna.Range("J23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=30"",PQ_Table13[edad],""<50"")"
 
     wsAna.Range("K21").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""SHORT"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=50"")"
     wsAna.Range("K22").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""LONG"",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=50"")"
-    wsAna.Range("K23").Formula = "=K21+K22"
+    wsAna.Range("K23").Formula = "=COUNTIFS(PQ_Table13[txt_duracion],""<> "",PQ_Table13[txt_finalizo],""<>5"",PQ_Table13[edad],"">=50"")"
+    
+    ' START TABLE 3: TABLE NAME ---------------------------------------------
+    
+    'Table Layout Styles
+    With wsAna.Range("B25:E30")
+        .HorizontalAlignment = xlCenter
+        .Borders.LineStyle = xlContinuous
+        .Borders.Weight = xlThin
+        .Borders.Color = RGB(244, 123, 61)
+    End With
+    
+    'Titles
+    With wsAna.Range("B25:E25")
+        .Merge
+        .HorizontalAlignment = xlCenter
+        .Interior.Color = RGB(244, 123, 61)
+        .Font.Bold = True
+        .Font.Color = RGB(255, 255, 255)
+        .Value = "Overview of Ta'Amay Centres for Training and Promotion of Peace"
+    End With
+    With wsAna.Range("B26:E26")
+        .Interior.Color = RGB(252, 228, 214)
+        .Font.Bold = True
+        .Value = Array("General", "Female", "Male", "Total")
+    End With
+    With wsAna.Range("B27:B30")
+        .Font.Bold = True
+        .Value = Application.Transpose(Array("Beneficiaries", "Certifications", "Inscriptions", "Desertion"))
+    End With
+    
+    'Formulas Female
+    With wsAna.Range("C27:C30")
+        .Formula = Application.Transpose(Array("=C12", "=C5", "=C4", "=C10"))
+    End With
+    'Formulas Male
+    With wsAna.Range("D27:D30")
+        .Formula = Application.Transpose(Array("=D12", "=D5", "=D4", "=D10"))
+    End With
+    'Forulas Total
+    With wsAna.Range("E27:E30")
+        .Formula = Application.Transpose(Array("=E12", "=E5", "=E4", "=E10"))
+    End With
+    
+    ' START TABLE 4: TABLE NAME ---------------------------------------------
 
     ' Auto-fit for professional look
-    'wsAna.Columns("B:K").AutoFit
+    wsAna.Columns("B:K").AutoFit
 
+    ' 4. SAFETY WRAPPERS OFF
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+    Application.EnableEvents = True
+    
+    MsgBox "Static tables generated successfully on " & Format(Date, "dd/mm/yyyy") & "!", vbInformation
 End Sub
+
 
